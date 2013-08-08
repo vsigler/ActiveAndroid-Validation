@@ -21,10 +21,11 @@ import cz.sigler.android.aavalidation.api.IValueDescriptor;
 import cz.sigler.android.aavalidation.rule.Pattern;
 
 /**
- * TODO: add description
+ * Checks field against given pattern.
  */
 public class PatternValidator implements IConstraintValidator<CharSequence, Pattern> {
 
+	/** Pattern to check. */
 	private java.util.regex.Pattern pattern;
 
 	/**
@@ -36,12 +37,10 @@ public class PatternValidator implements IConstraintValidator<CharSequence, Patt
 	}
 
 	/**
-	 *
-	 * @param value
-	 * @return
+	 * {@inheritDoc }
 	 */
 	@Override
-	public boolean isValid(IValueDescriptor<CharSequence> value) {
+	public boolean isValid(final IValueDescriptor<CharSequence> value) {
 		CharSequence toMatch = value.getValue();
 		return toMatch == null || pattern.matcher(toMatch).matches();
 	}

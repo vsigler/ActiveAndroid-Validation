@@ -76,13 +76,13 @@ public class NotEmptyValidatorTest extends ValidatorTestBase {
 
 		@Column(name = COLUMN_NAME)
 		@NotEmpty(message = ERROR_MESSAGE)
-		private Object testField;
+		private String testField;
 
-		public Object getTestField() {
+		public String getTestField() {
 			return testField;
 		}
 
-		public void setTestField(Object testField) {
+		public void setTestField(String testField) {
 			this.testField = testField;
 		}
 	}

@@ -24,6 +24,9 @@ import cz.sigler.android.aavalidation.api.IConstraintValidator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +44,11 @@ public class ValidationInfo {
 
 	/** Method that all constraint annotations should have - message resource id. */
 	private static final String METHOD_MESSAGE_RESOURCE = "messageResId";
+
+	/**
+	 * Index of the accepted type parameter on a validator.
+	 */
+	private static final int INDEX_ACCEPTED_TYPE = 0;
 
 	/** Prepared validation descriptors. */
 	private static Map<Class<? extends Model>, List<ValidationDefinition>> preparedValidations =
@@ -91,7 +99,13 @@ public class ValidationInfo {
 				for (Annotation annot : field.getAnnotations()) {
 					if (annot.annotationType().isAnnotationPresent(Constraint.class)) {
 						Constraint constraint = annot.annotationType().getAnnotation(Constraint.class);
-						Class<? extends IConstraintValidator> validatorClass = constraint.validatorClass();
+						Class<? extends IConstraintValidator> validatorClass = getValidatorClass(constraint, field.getType());
+
+						if (validatorClass == null) {
+							throw new IllegalStateException("Constraint " + annot.annotationType().getName() + " does not validate type "
+											+ field.getType());
+						}
+
 						IConstraintValidator validator;
 						int messageResId = 0;
 						String message = "";
@@ -142,5 +156,32 @@ public class ValidationInfo {
 		Class configAnnotationClass = annotation.getClass();
 		Method messageResMethod = configAnnotationClass.getMethod(name);
 		return messageResMethod.invoke(annotation);
+	}
+
+	/**
+	 * Gets the validator class validating the field type or null if there is none.
+	 *
+	 * @param constraint
+	 *					constraint annotation
+	 * @param requiredType
+	 *					type of the field to be validated
+	 * @return validator class or null
+	 */
+	private static Class<? extends IConstraintValidator> getValidatorClass(final Constraint constraint, final Class requiredType) {
+		for (Class<? extends IConstraintValidator> clazz : constraint.value()) {
+			ParameterizedType superClass;
+
+			//TODO: make this universal, not just plainly convering the cases in this library
+			if (clazz.getGenericInterfaces().length > 0) {
+				superClass = (ParameterizedType) clazz.getGenericInterfaces()[0];
+			}	else {
+				superClass = (ParameterizedType) clazz.getGenericSuperclass();
+			}
+			Class acceptedType = (Class) superClass.getActualTypeArguments()[INDEX_ACCEPTED_TYPE];
+			if (acceptedType.isAssignableFrom(requiredType)) {
+				return clazz;
+			}
+		}
+		return null;
 	}
 }

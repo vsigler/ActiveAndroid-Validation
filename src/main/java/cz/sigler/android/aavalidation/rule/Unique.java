@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatorClass = UniqueValidator.class)
+@Constraint(UniqueValidator.class)
 public @interface Unique {
 
 	/**

@@ -17,20 +17,20 @@
 package cz.sigler.android.aavalidation.rule;
 
 import cz.sigler.android.aavalidation.api.rule.Constraint;
-import cz.sigler.android.aavalidation.validator.NotBlankValidator;
+import cz.sigler.android.aavalidation.validator.FutureCalendarValidator;
+import cz.sigler.android.aavalidation.validator.FutureDateValidator;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Validation rule for not-blank (not empty after trim) check.
+ * Future date constraint.
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(NotBlankValidator.class)
-public @interface NotBlank {
-
+@Constraint({ FutureDateValidator.class, FutureCalendarValidator.class })
+public @interface Future {
 	/**
 	 * @return Error message text.
 	 */
@@ -40,5 +40,5 @@ public @interface NotBlank {
 	 * @return Error message resource id.
 	 */
 	int messageResId() default 0;
-
+	
 }

@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 public @interface Constraint {
 
 	/**
-	 * @return class implementing validation for this constraint
+	 * @return classes implementing validation for this constraint
 	 */
-	Class<? extends IConstraintValidator> validatorClass();
+	Class<? extends IConstraintValidator>[] value();
 }

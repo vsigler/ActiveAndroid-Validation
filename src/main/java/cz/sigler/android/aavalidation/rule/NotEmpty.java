@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatorClass = NotEmptyValidator.class)
+@Constraint(NotEmptyValidator.class)
 public @interface NotEmpty {
 
 	/**

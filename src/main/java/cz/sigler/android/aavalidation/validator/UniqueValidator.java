@@ -17,22 +17,21 @@
 package cz.sigler.android.aavalidation.validator;
 
 import cz.sigler.android.aavalidation.api.IValueDescriptor;
-import cz.sigler.android.aavalidation.api.IConstraintValidator;
 import com.activeandroid.Model;
 import com.activeandroid.query.From;
 import com.activeandroid.query.Select;
 import cz.sigler.android.aavalidation.rule.Unique;
 
 /**
- * TODO: add description
+ * Validator for the unique constraint. Checks whether there is not a row
+ * in the database, different model instance, that has the same field value, but
+ * different id than the currently validated model.
  */
-public class UniqueValidator implements IConstraintValidator<Object, Unique> {
+public class UniqueValidator extends ValidatorBase<Object, Unique> {
 
-	@Override
-	public void initialize(Unique annotation) {
-		//nothing to do here
-	}
-
+	/**
+	 * {@inheritDoc }
+	 */
 	@Override
 	public boolean isValid(IValueDescriptor<Object> value) {
 		Model model = value.getModel();

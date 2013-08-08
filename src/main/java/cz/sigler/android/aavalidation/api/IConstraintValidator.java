@@ -38,5 +38,5 @@ public interface IConstraintValidator<U, T extends Annotation> {
 	 *			value to validate
 	 * @return true if value is valid
 	 */
-	boolean isValid(IValueDescriptor<U> value);
+	boolean isValid(IValueDescriptor<U> value);	
 }

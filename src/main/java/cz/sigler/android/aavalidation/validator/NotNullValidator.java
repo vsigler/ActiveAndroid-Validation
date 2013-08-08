@@ -17,19 +17,16 @@
 package cz.sigler.android.aavalidation.validator;
 
 import cz.sigler.android.aavalidation.api.IValueDescriptor;
-import cz.sigler.android.aavalidation.api.IConstraintValidator;
 import cz.sigler.android.aavalidation.rule.NotNull;
 
 /**
- * TODO: add description
+ * Not-null check.
  */
-public class NotNullValidator implements IConstraintValidator<Object, NotNull> {
+public class NotNullValidator extends ValidatorBase<Object, NotNull> {
 
-	@Override
-	public void initialize(final NotNull annotation) {
-		//nothing to do here
-	}
-	
+	/**
+	 * {@inheritDoc }
+	 */
 	@Override
 	public boolean isValid(final IValueDescriptor<Object> value) {
 		return value.getValue() != null;

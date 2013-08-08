@@ -17,21 +17,12 @@
 package cz.sigler.android.aavalidation.validator;
 
 import cz.sigler.android.aavalidation.api.IValueDescriptor;
-import cz.sigler.android.aavalidation.api.IConstraintValidator;
 import cz.sigler.android.aavalidation.rule.NotEmpty;
 
 /**
  * Validator for the NotEmpty constraint.
  */
-public class NotEmptyValidator implements IConstraintValidator<CharSequence, NotEmpty> {
-
-	/**
-	 * {@inheritDoc }
-	 */
-	@Override
-	public void initialize(final NotEmpty annotation) {
-		//nothing to do here
-	}
+public class NotEmptyValidator extends ValidatorBase<CharSequence, NotEmpty> {
 
 	/**
 	 * {@inheritDoc }
