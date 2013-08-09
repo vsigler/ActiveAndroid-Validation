@@ -175,10 +175,39 @@ public class ValidationInfo {
 				superClass = (ParameterizedType) clazz.getGenericSuperclass();
 			}
 			Class acceptedType = (Class) superClass.getActualTypeArguments()[INDEX_ACCEPTED_TYPE];
-			if (acceptedType.isAssignableFrom(requiredType)) {
+			if (acceptedType.isAssignableFrom(getBoxWrapperIfPrimitive(requiredType))) {
 				return clazz;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Handles primitive types, returning their boxed counterpart.
+	 * For non-primitive types just returns the class it got as argument.
+	 *
+	 * @param clazz
+	 *					class to process
+	 * @return boxed (or original) class
+	 */
+	private static Class getBoxWrapperIfPrimitive(final Class clazz) {
+		//TODO: is there a more elegant way to get a boxed counterpart of primitives?
+		if (!clazz.isPrimitive()) { // add this check here, so that it does not need to go through all branches
+			return clazz;
+		} else if (byte.class.equals(clazz)) {
+			return Byte.class;
+		} else if (char.class.equals(clazz)) {
+			return Character.class;
+		} else if (float.class.equals(clazz)) {
+			return Float.class;
+		} else if (int.class.equals(clazz)) {
+			return Integer.class;
+		} else if (long.class.equals(clazz)) {
+			return Long.class;
+		} else if (short.class.equals(clazz)) {
+			return Short.class;
+		} else {
+			return clazz;
+		}
 	}
 }
