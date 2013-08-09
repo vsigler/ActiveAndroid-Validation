@@ -18,15 +18,12 @@ package cz.sigler.android.aavalidation.internal;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
-import cz.sigler.android.aavalidation.ValidatingModel;
 import cz.sigler.android.aavalidation.api.rule.Constraint;
 import cz.sigler.android.aavalidation.api.IConstraintValidator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -171,7 +168,7 @@ public class ValidationInfo {
 		for (Class<? extends IConstraintValidator> clazz : constraint.value()) {
 			ParameterizedType superClass;
 
-			//TODO: make this universal, not just plainly convering the cases in this library
+			//TODO: make this universal, not just plainly covering the cases in this library
 			if (clazz.getGenericInterfaces().length > 0) {
 				superClass = (ParameterizedType) clazz.getGenericInterfaces()[0];
 			}	else {
