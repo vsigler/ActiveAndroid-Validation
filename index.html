@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>ActiveAndroid-validation by vsigler</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>ActiveAndroid-validation</h1>
+        <p>Simple validation framework on top of ActiveAndroid ORM.</p>
+
+        <p class="view"><a href="https://github.com/vsigler/ActiveAndroid-Validation">View the Project on GitHub <small>vsigler/ActiveAndroid-Validation</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/vsigler/ActiveAndroid-Validation/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/vsigler/ActiveAndroid-Validation/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/vsigler/ActiveAndroid-Validation">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="activeandroid-validation" class="anchor" href="#activeandroid-validation"><span class="octicon octicon-link"></span></a>ActiveAndroid-Validation</h1>
+
+<h2>
+<a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>About</h2>
+
+<p>An extension to <a href="http://github.com/pardom/ActiveAndroid">ActiveAndroid</a> adding validation functionality to models, sticking to the simple-to-use way of the ActiveAndroid library.</p>
+
+<p>I was looking for a simple ORM framework for Android and came across ActiveAndroid, an elegant active-record-like solution very easy to use. Ok, now I have easy to use persistence in my application, but I still have to implement validation on the model fields before saving. ActiveAndroid allows to define NOT NULL or UNIQUE constraints in the database, but it always saves model silently, even if the save failed due to constraint violation. Now I can execute all checks easily before trying to save the model - this covers not only simple field value checks, but also data-related constraints such as the <em>Unique</em> constraint.</p>
+
+<h2>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h2>
+
+<p>To define validation rules, just annotate your model fields with constraints in a manner inspired by <a href="http://beanvalidation.org/1.1">bean validation (JSR 349)</a>. To add validation functionality to your model, subclass <strong>ValidatingModel</strong> instead of <strong>Model</strong>:</p>
+
+<div class="highlight"><pre><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">TestModel</span> <span class="kd">extends</span> <span class="n">ValidatingModel</span> <span class="o">{</span>
+
+    <span class="nd">@Column</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"foo"</span><span class="o">)</span>
+    <span class="nd">@NotNull</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">"This cannot be null!"</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="n">Object</span> <span class="n">testField</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">getTestField</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">testField</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTestField</span><span class="o">(</span><span class="n">Object</span> <span class="n">testField</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">testField</span> <span class="o">=</span> <span class="n">testField</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>Now, to validate the model, simply call <strong>isValid()</strong>:</p>
+
+<div class="highlight"><pre><span class="n">TestModel</span> <span class="n">model</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TestModel</span><span class="o">();</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">model</span><span class="o">.</span><span class="na">isValid</span><span class="o">())</span> <span class="o">{</span>
+    <span class="c1">//yay, we're valid!</span>
+<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    <span class="c1">//model is not valid, deal with it!</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">ValidationError</span><span class="o">&gt;</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="na">getErrors</span><span class="o">();</span>
+    <span class="c1">//now you can process the errors, display to the user, etc.</span>
+<span class="o">}</span>
+
+<span class="c1">//Or combined with the save method</span>
+<span class="k">try</span> <span class="o">{</span>
+    <span class="n">model</span><span class="o">.</span><span class="na">saveOrThrow</span><span class="o">();</span> <span class="c1">// this wraps validation around the save() method of the Model</span>
+<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ValidationException</span> <span class="n">ve</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">ValidationError</span><span class="o">&gt;</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">ve</span><span class="o">.</span><span class="na">getErrors</span><span class="o">();</span>
+    <span class="c1">//handle errors here</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>What if I already have my own customised/subclassed models? Just wrap a validation layer on top of your model:</p>
+
+<div class="highlight"><pre><span class="n">IModelSupport</span><span class="o">&lt;</span><span class="n">TestModel</span><span class="o">&gt;</span> <span class="n">support</span> <span class="o">=</span> <span class="n">ModelSupportFactory</span><span class="o">.</span><span class="na">wrapModel</span><span class="o">(</span><span class="n">model</span><span class="o">);</span>
+
+<span class="kt">boolean</span> <span class="n">valid</span> <span class="o">=</span> <span class="n">support</span><span class="o">.</span><span class="na">isValid</span><span class="o">();</span> <span class="c1">// now you have all that jazz from Validating model</span>
+<span class="n">Long</span> <span class="n">modelId</span> <span class="o">=</span> <span class="n">support</span><span class="o">.</span><span class="na">getId</span><span class="o">();</span>
+<span class="n">support</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+<span class="n">support</span><span class="o">.</span><span class="na">saveOrThrow</span><span class="o">();</span>
+<span class="n">support</span><span class="o">.</span><span class="na">delete</span><span class="o">();</span>
+<span class="o">.</span>
+<span class="o">.</span>
+<span class="o">.</span>
+
+<span class="c1">//with a little difference as it is a wrapper, not subclass:</span>
+<span class="n">Object</span> <span class="n">myValue</span> <span class="o">=</span> <span class="n">support</span><span class="o">.</span><span class="na">getFieldValue</span><span class="o">(</span><span class="s">"testField"</span><span class="o">);</span>
+<span class="n">support</span><span class="o">.</span><span class="na">setFieldValue</span><span class="o">(</span><span class="s">"testField"</span><span class="o">,</span> <span class="n">someObject</span><span class="o">);</span>
+
+<span class="c1">//you can always get to your original model</span>
+<span class="n">MyCustomModel</span> <span class="n">model</span> <span class="o">=</span> <span class="n">support</span><span class="o">.</span><span class="na">getModel</span><span class="o">();</span>
+</pre></div>
+
+<h2>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
+
+<p>I will be adding topics gradually, I just do not have them ready at the moment.</p>
+
+<ul>
+<li>ValidatingModel</li>
+<li>Wrapping existing model - ModelSupportFactory</li>
+<li>Built-in constraints</li>
+<li>Defining your own constraints</li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/vsigler">vsigler</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
