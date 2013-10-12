@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ActiveAndroid-Validation" default="dist" basedir=".">
+	<description>
+		Ant build file for ActiveAndroid-Validation project.
+		To make this work, add ActiveAndroid (latest version at any point
+		in time shoud work, if not, raise an issue) and android (2.3.3+) jars
+		into the lib directory.
+	</description>
+	<!-- set global properties for this build -->
+	<property name="src" location="src/main/java"/>
+	<property name="build" location="build"/>
+	<property name="dist"  location="dist"/>
+	<property name="libs"   value="libs"/>
+
+	<path id="classpath">
+		<fileset dir="${libs}" includes="**/*.jar"/>
+	</path>
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}"/>
+	</target>
+
+	<target name="compile" depends="init"
+		  description="compile the source " >
+		<!-- Compile the java code from ${src} into ${build} -->
+		<javac srcdir="${src}" classpathref="classpath" source="1.6" target="1.6" destdir="${build}"/>
+	</target>
+
+	<target name="dist" depends="compile"
+		  description="generate the distribution" >		
+		<mkdir dir="${dist}"/>		
+		<jar jarfile="${dist}/ActiveAndroid-Validation.jar" basedir="${build}"/>
+	</target>
+
+	<target name="clean"
+		  description="clean up" >
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+</project>
